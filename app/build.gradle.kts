@@ -12,8 +12,8 @@ android {
         applicationId = "com.homedistill.alcoholcalc"
         minSdk = 24
         targetSdk = 35
-        versionCode = 11
-        versionName = "2.0"
+        versionCode = 10
+        versionName = "1.9"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
