@@ -18,6 +18,8 @@ data class UpdateInfo(
     val versionTag: String,
     val downloadUrl: String,
     val assetName: String,
+    /** The release's description/changelog text, as written on GitHub. May be blank. */
+    val releaseNotes: String,
 )
 
 /** Download progress: [bytesRead] so far, [totalBytes] from Content-Length or -1 if unknown. */
@@ -57,7 +59,12 @@ class UpdateRepository(private val context: Context) {
             }
             if (downloadUrl.isNullOrBlank() || assetName == null) return@withContext null
 
-            UpdateInfo(versionTag = tag, downloadUrl = downloadUrl, assetName = assetName)
+            UpdateInfo(
+                versionTag = tag,
+                downloadUrl = downloadUrl,
+                assetName = assetName,
+                releaseNotes = json.optString("body").trim(),
+            )
         } catch (e: CancellationException) {
             throw e
         } catch (_: Exception) {

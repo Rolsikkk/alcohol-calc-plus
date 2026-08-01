@@ -54,6 +54,7 @@ const val DASH = "—"
 fun CalculatorScaffold(
     title: String,
     onBack: () -> Unit,
+    bottomBar: @Composable () -> Unit = {},
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Scaffold(
@@ -72,6 +73,7 @@ fun CalculatorScaffold(
                 ),
             )
         },
+        bottomBar = bottomBar,
     ) { padding ->
         Column(
             modifier = Modifier

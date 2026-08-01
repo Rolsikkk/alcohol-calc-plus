@@ -2,6 +2,7 @@ package com.homedistill.alcoholcalc.ui.screens.home
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,6 +31,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.homedistill.alcoholcalc.BuildConfig
 import com.homedistill.alcoholcalc.R
 import com.homedistill.alcoholcalc.data.UserPreferencesRepository
 import com.homedistill.alcoholcalc.ui.navigation.CalculatorTab
@@ -62,27 +64,37 @@ fun HomeScreen(
             )
         },
     ) { padding ->
-        LazyColumn(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
         ) {
-            items(visibleTabs) { tab ->
-                HomeListItem(
-                    icon = tab.icon,
-                    title = stringResource(tab.titleRes),
-                    onClick = { onOpenTab(tab) },
-                )
-                HorizontalDivider()
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                items(visibleTabs) { tab ->
+                    HomeListItem(
+                        icon = tab.icon,
+                        title = stringResource(tab.titleRes),
+                        onClick = { onOpenTab(tab) },
+                    )
+                    HorizontalDivider()
+                }
+                item {
+                    HomeListItem(
+                        icon = Icons.Filled.Settings,
+                        title = stringResource(R.string.tab_settings),
+                        onClick = onOpenSettings,
+                    )
+                    HorizontalDivider()
+                }
             }
-            item {
-                HomeListItem(
-                    icon = Icons.Filled.Settings,
-                    title = stringResource(R.string.tab_settings),
-                    onClick = onOpenSettings,
-                )
-                HorizontalDivider()
-            }
+            Text(
+                text = stringResource(R.string.app_version, BuildConfig.VERSION_NAME),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+            )
         }
     }
 }

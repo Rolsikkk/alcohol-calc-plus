@@ -90,12 +90,15 @@
 
     <string name="update_available_title">Доступно обновление</string>
     <string name="update_available_message">Вышла новая версия %1$s. Скачать и установить?</string>
+    <string name="update_release_notes_label">Что нового:</string>
     <string name="update_action_update">Обновить</string>
     <string name="update_action_later">Позже</string>
     <string name="update_downloading_title">Загрузка версии %1$s…</string>
     <string name="update_progress_known">%1$d%% — %2$.1f из %3$.1f МБ</string>
     <string name="update_progress_unknown">Загружено %1$.1f МБ…</string>
     <string name="update_failed_title">Не удалось загрузить</string>
-    <string name="update_failed_message">Проверьте подключение к интернету и попробуйте снова.</string>
+    <string name="update_failed_message">Проверьте подключение к интернету и попробуйте снова. Если GitHub не открывается, попробуйте включить VPN.</string>
     <string name="update_action_retry">Повторить</string>
+
+    <string name="app_version">v%1$s</string>
 </resources>
