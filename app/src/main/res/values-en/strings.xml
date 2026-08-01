@@ -1,0 +1,99 @@
+<resources>
+    <string name="app_name">Alcohol Calculator+</string>
+
+    <string name="tab_dilution">Spirit Dilution</string>
+    <string name="tab_rectification">Rectification</string>
+    <string name="tab_mixing">Mixing Solutions</string>
+    <string name="tab_timer">Collection Timer</string>
+    <string name="tab_thermometer">Alcoholmeter t(C)</string>
+    <string name="tab_hydrometer">Hydrometer t(C)</string>
+    <string name="tab_pressure">Pressure / Vacuum</string>
+    <string name="tab_heater">Heater Power</string>
+    <string name="tab_settings">Settings</string>
+
+    <string name="dilution_ac">AC (mL)</string>
+    <string name="dilution_invalid_hint">Check the input: values must be greater than 0, and the target strength must be lower than the starting strength.</string>
+    <string name="dilution_section_spirit">Spirit</string>
+    <string name="dilution_section_water">Water</string>
+    <string name="dilution_section_result">Result</string>
+    <string name="action_reset">RESET</string>
+
+    <string name="rectification_v">Raw spirit volume</string>
+    <string name="rectification_p">Raw spirit strength</string>
+    <string name="rectification_heads_pct">Heads, % of AC</string>
+    <string name="rectification_body_pct">Hearts, % of AC</string>
+    <string name="rectification_tails_pct">Tails, % of AC</string>
+    <string name="rectification_ac">Absolute alcohol (AC)</string>
+    <string name="rectification_heads">Heads</string>
+    <string name="rectification_body">Hearts</string>
+    <string name="rectification_tails">Tails</string>
+    <string name="rectification_raw_mass">Raw spirit mass</string>
+    <string name="rectification_section_raw">Raw spirit</string>
+    <string name="rectification_section_result">Result</string>
+    <string name="rectification_section_settings">Settings</string>
+
+    <string name="mixing_solution_1">Solution 1</string>
+    <string name="mixing_solution_2">Solution 2</string>
+    <string name="mixing_solution_3">Solution 3 (optional)</string>
+    <string name="mixing_result">Result</string>
+
+    <string name="timer_volume">collected volume (mL)</string>
+    <string name="timer_time">collection time (s)</string>
+    <string name="timer_ml_per_hour">rate per hour (mL/h)</string>
+    <string name="timer_ml_per_min">rate per minute (mL/min)</string>
+    <string name="timer_start">START TIMER</string>
+    <string name="timer_stop">STOP TIMER</string>
+    <string name="timer_reset">RESET TIMER</string>
+
+    <string name="thermometer_temp">sample temperature (°C)</string>
+    <string name="thermometer_apparent">alcoholmeter reading (%)</string>
+    <string name="thermometer_real">true strength (at 20°C)</string>
+    <string name="thermometer_hint">The alcoholmeter is calibrated at 20°C; the correction is approximate.</string>
+
+    <string name="hydrometer_temp">sample temperature (°C)</string>
+    <string name="hydrometer_sg">hydrometer reading (SG×1000)</string>
+    <string name="hydrometer_brix">Brix %</string>
+    <string name="hydrometer_sg20">true density (SG) at 20°C</string>
+    <string name="hydrometer_brix20">Brix %</string>
+
+    <string name="pressure_p">pressure, mmHg</string>
+    <string name="pressure_cube_abv">% alcohol in the boiler</string>
+    <string name="pressure_boil_temp">boiling point (°C)</string>
+    <string name="pressure_vapor_abv">% alcohol in vapor (by volume)</string>
+    <string name="pressure_hint">Approximate calculation: a simplified phase-equilibrium model, not a full lab-grade table.</string>
+
+    <string name="heater_rated_voltage">rated element voltage (V)</string>
+    <string name="heater_rated_power">rated element power (W)</string>
+    <string name="heater_real_voltage">actual element voltage (V)</string>
+    <string name="heater_resistance">element resistance (Ω)</string>
+    <string name="heater_real_power">heating power (W)</string>
+    <string name="heater_real_current">mains current (A)</string>
+
+    <string name="settings_visible_tabs">Home screen tabs</string>
+    <string name="settings_language">Language / Язык</string>
+    <string name="settings_language_ru">Русский</string>
+    <string name="settings_language_en">English</string>
+    <string name="settings_hint">The tab list applies immediately. Changing the language restarts the app.</string>
+
+    <string name="unit_ml">mL</string>
+    <string name="unit_percent">%</string>
+    <string name="unit_g">g</string>
+    <string name="unit_seconds">s</string>
+    <string name="unit_ml_per_hour">mL/h</string>
+    <string name="unit_ml_per_min">mL/min</string>
+    <string name="unit_celsius">°C</string>
+    <string name="unit_mmhg">mmHg</string>
+    <string name="unit_volts">V</string>
+    <string name="unit_watts">W</string>
+    <string name="unit_ohm">Ω</string>
+    <string name="unit_amps">A</string>
+
+    <string name="update_available_title">Update available</string>
+    <string name="update_available_message">Version %1$s is available. Download and install it?</string>
+    <string name="update_action_update">Update</string>
+    <string name="update_action_later">Later</string>
+    <string name="update_downloading_title">Downloading update…</string>
+    <string name="update_failed_title">Download failed</string>
+    <string name="update_failed_message">Check your internet connection and try again.</string>
+    <string name="update_action_retry">Retry</string>
+</resources>

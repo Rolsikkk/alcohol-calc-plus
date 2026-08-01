@@ -1,0 +1,99 @@
+<resources>
+    <string name="app_name">Калькулятор спирта+</string>
+
+    <string name="tab_dilution">Разбавление спирта</string>
+    <string name="tab_rectification">Ректификация</string>
+    <string name="tab_mixing">Смешивание растворов</string>
+    <string name="tab_timer">Таймер отбора</string>
+    <string name="tab_thermometer">Спиртуозность t(C)</string>
+    <string name="tab_hydrometer">Плотность t(C)</string>
+    <string name="tab_pressure">Давление / Вакуум</string>
+    <string name="tab_heater">Мощность нагрева</string>
+    <string name="tab_settings">Настройки</string>
+
+    <string name="dilution_ac">АС (мл)</string>
+    <string name="dilution_invalid_hint">Проверьте ввод: значения должны быть больше 0, а целевая крепость — меньше начальной.</string>
+    <string name="dilution_section_spirit">Спирт</string>
+    <string name="dilution_section_water">Вода</string>
+    <string name="dilution_section_result">Результат</string>
+    <string name="action_reset">СБРОС</string>
+
+    <string name="rectification_v">Объём сырца</string>
+    <string name="rectification_p">Крепость сырца</string>
+    <string name="rectification_heads_pct">Головы, % от AC</string>
+    <string name="rectification_body_pct">Тело, % от AC</string>
+    <string name="rectification_tails_pct">Хвосты, % от AC</string>
+    <string name="rectification_ac">Абсолютный спирт (AC)</string>
+    <string name="rectification_heads">Головы</string>
+    <string name="rectification_body">Тело</string>
+    <string name="rectification_tails">Хвосты</string>
+    <string name="rectification_raw_mass">Масса сырца</string>
+    <string name="rectification_section_raw">Спирт сырец</string>
+    <string name="rectification_section_result">Результат</string>
+    <string name="rectification_section_settings">Настройки</string>
+
+    <string name="mixing_solution_1">Раствор 1</string>
+    <string name="mixing_solution_2">Раствор 2</string>
+    <string name="mixing_solution_3">Раствор 3 (необязательно)</string>
+    <string name="mixing_result">Результат</string>
+
+    <string name="timer_volume">объём отобранного (мл)</string>
+    <string name="timer_time">время отбора (с)</string>
+    <string name="timer_ml_per_hour">отберём за час (мл/ч)</string>
+    <string name="timer_ml_per_min">отберём за минуту (мл/мин)</string>
+    <string name="timer_start">ЗАПУСТИТЬ ТАЙМЕР</string>
+    <string name="timer_stop">ОСТАНОВИТЬ ТАЙМЕР</string>
+    <string name="timer_reset">СБРОС ТАЙМЕРА</string>
+
+    <string name="thermometer_temp">температура измерения (°C)</string>
+    <string name="thermometer_apparent">% на спиртометре</string>
+    <string name="thermometer_real">% спирта реальный (при 20°C)</string>
+    <string name="thermometer_hint">Спиртометр откалиброван на 20°C, поправка приближённая.</string>
+
+    <string name="hydrometer_temp">температура измерения (°C)</string>
+    <string name="hydrometer_sg">показания ареометра (SG×1000)</string>
+    <string name="hydrometer_brix">Brix %</string>
+    <string name="hydrometer_sg20">реальная плотность (SG) при 20°C</string>
+    <string name="hydrometer_brix20">Brix %</string>
+
+    <string name="pressure_p">давление, мм рт.ст.</string>
+    <string name="pressure_cube_abv">% спирта в кубе</string>
+    <string name="pressure_boil_temp">температура кипения (°C)</string>
+    <string name="pressure_vapor_abv">% спирта в паре (объёмный)</string>
+    <string name="pressure_hint">Расчёт приближённый: упрощённая модель фазового равновесия, не полная лабораторная таблица.</string>
+
+    <string name="heater_rated_voltage">паспортное напряжение тэна (В)</string>
+    <string name="heater_rated_power">паспортная мощность тэна (Вт)</string>
+    <string name="heater_real_voltage">напряжение на тэне (В)</string>
+    <string name="heater_resistance">сопротивление тэна (Ом)</string>
+    <string name="heater_real_power">мощность нагрева (Вт)</string>
+    <string name="heater_real_current">ток в сети (А)</string>
+
+    <string name="settings_visible_tabs">Вкладки на главном экране</string>
+    <string name="settings_language">Язык / Language</string>
+    <string name="settings_language_ru">Русский</string>
+    <string name="settings_language_en">English</string>
+    <string name="settings_hint">Список вкладок применяется сразу. Смена языка перезапустит приложение.</string>
+
+    <string name="unit_ml">мл</string>
+    <string name="unit_percent">%</string>
+    <string name="unit_g">г</string>
+    <string name="unit_seconds">с</string>
+    <string name="unit_ml_per_hour">мл/ч</string>
+    <string name="unit_ml_per_min">мл/мин</string>
+    <string name="unit_celsius">°C</string>
+    <string name="unit_mmhg">мм рт.ст.</string>
+    <string name="unit_volts">В</string>
+    <string name="unit_watts">Вт</string>
+    <string name="unit_ohm">Ом</string>
+    <string name="unit_amps">А</string>
+
+    <string name="update_available_title">Доступно обновление</string>
+    <string name="update_available_message">Вышла новая версия %1$s. Скачать и установить?</string>
+    <string name="update_action_update">Обновить</string>
+    <string name="update_action_later">Позже</string>
+    <string name="update_downloading_title">Загрузка обновления…</string>
+    <string name="update_failed_title">Не удалось загрузить</string>
+    <string name="update_failed_message">Проверьте подключение к интернету и попробуйте снова.</string>
+    <string name="update_action_retry">Повторить</string>
+</resources>
