@@ -4,75 +4,59 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!-- Faint mirrored reflection of the flasks, matching the reference icon's glass-table look -->
-    <group android:pivotY="80" android:scaleY="-1">
-        <path
-            android:pathData="M22,24 L30,24 L30,38 L42,66 Q42,72 36,72 L14,72 Q8,72 8,66 L22,38 Z"
-            android:fillColor="#1A1A1A"
-            android:fillAlpha="0.12" />
-        <path
-            android:pathData="M76,26 L84,26 L84,46 L76,46 Z"
-            android:fillColor="#1A1A1A"
-            android:fillAlpha="0.12" />
-        <path
-            android:pathData="M63,64 a17,17 0 1,0 34,0 a17,17 0 1,0 -34,0"
-            android:fillColor="#1A1A1A"
-            android:fillAlpha="0.12" />
-        <path
-            android:pathData="M46,12 L56,12 L56,32 L70,72 Q70,80 62,80 L34,80 Q26,80 26,72 L46,32 Z"
-            android:fillColor="#1A1A1A"
-            android:fillAlpha="0.18" />
+    <!-- Mirrored reflection, faked as three stacked fading copies (glass-table look) -->
+    <group android:pivotY="86" android:scaleY="-1">
+        <path android:pathData="M18,10 L30,10 L30,26 L44,80 Q44,86 38,86 L12,86 Q6,86 6,80 L18,26 Z" android:fillColor="#4A4A4A" android:fillAlpha="0.16" />
+        <path android:pathData="M46,8 L58,8 L58,70 Q58,78 52,78 Q46,78 46,70 Z" android:fillColor="#4A4A4A" android:fillAlpha="0.16" />
+        <path android:pathData="M76,26 L84,26 L84,44 L76,44 Z" android:fillColor="#4A4A4A" android:fillAlpha="0.16" />
+        <path android:pathData="M63,64 a17,17 0 1,0 34,0 a17,17 0 1,0 -34,0" android:fillColor="#4A4A4A" android:fillAlpha="0.16" />
+    </group>
+    <group android:pivotY="94" android:scaleY="-1">
+        <path android:pathData="M18,10 L30,10 L30,26 L44,80 Q44,86 38,86 L12,86 Q6,86 6,80 L18,26 Z" android:fillColor="#4A4A4A" android:fillAlpha="0.08" />
+        <path android:pathData="M63,64 a17,17 0 1,0 34,0 a17,17 0 1,0 -34,0" android:fillColor="#4A4A4A" android:fillAlpha="0.08" />
     </group>
 
-    <!-- Flask 1: back-left, short conical flask -->
+    <!-- Flask 1: left, tall Erlenmeyer flask (the dominant one) -->
     <path
-        android:pathData="M22,24 L30,24 L30,38 L42,66 Q42,72 36,72 L14,72 Q8,72 8,66 L22,38 Z"
-        android:strokeColor="#1A1A1A"
+        android:pathData="M18,10 L30,10 L30,26 L44,80 Q44,86 38,86 L12,86 Q6,86 6,80 L18,26 Z"
+        android:strokeColor="#4A4A4A"
         android:strokeWidth="3"
         android:strokeLineJoin="round"
         android:strokeLineCap="round"
-        android:fillColor="#00000000" />
+        android:fillColor="#FFFFFF" />
+    <path android:pathData="M13,50 L36,50 L40,76 Q40,82 34,82 L14,82 Q8,82 8,76 Z" android:fillColor="#4A4A4A" />
+    <path android:pathData="M16,64 m-1.6,0 a1.6,1.6 0 1,0 3.2,0 a1.6,1.6 0 1,0 -3.2,0" android:fillColor="#FFFFFF" />
+    <path android:pathData="M27,72 m-2,0 a2,2 0 1,0 4,0 a2,2 0 1,0 -4,0" android:fillColor="#FFFFFF" />
+    <path android:pathData="M22,58 m-1.2,0 a1.2,1.2 0 1,0 2.4,0 a1.2,1.2 0 1,0 -2.4,0" android:fillColor="#FFFFFF" />
 
     <!-- Flask 3: right, round-bottom flask (drawn before flask 2 so flask 2 sits in front) -->
     <path
-        android:pathData="M76,26 L84,26 L84,46 L76,46 Z"
-        android:strokeColor="#1A1A1A"
+        android:pathData="M76,26 L84,26 L84,44 L76,44 Z"
+        android:strokeColor="#4A4A4A"
         android:strokeWidth="3"
         android:strokeLineJoin="round"
         android:fillColor="#FFFFFF" />
     <path
         android:pathData="M63,64 a17,17 0 1,0 34,0 a17,17 0 1,0 -34,0"
-        android:strokeColor="#1A1A1A"
+        android:strokeColor="#4A4A4A"
         android:strokeWidth="3"
         android:fillColor="#FFFFFF" />
+    <path android:pathData="M63.5,60 A17,17 0 1,1 96.5,60 Z" android:fillColor="#4A4A4A" />
+    <path android:pathData="M78,74 m-1.6,0 a1.6,1.6 0 1,0 3.2,0 a1.6,1.6 0 1,0 -3.2,0" android:fillColor="#FFFFFF" />
+    <path android:pathData="M88,76 m-1.4,0 a1.4,1.4 0 1,0 2.8,0 a1.4,1.4 0 1,0 -2.8,0" android:fillColor="#FFFFFF" />
 
-    <!-- Flask 2: middle, tall conical flask (front-center) -->
+    <!-- Flask 2: middle, thin straight tube (front-center) -->
     <path
-        android:pathData="M46,12 L56,12 L56,32 L70,72 Q70,80 62,80 L34,80 Q26,80 26,72 L46,32 Z"
-        android:strokeColor="#1A1A1A"
+        android:pathData="M46,8 L58,8 L58,70 Q58,78 52,78 Q46,78 46,70 Z"
+        android:strokeColor="#4A4A4A"
         android:strokeWidth="3"
         android:strokeLineJoin="round"
         android:strokeLineCap="round"
         android:fillColor="#FFFFFF" />
+    <path android:pathData="M47,58 L57,58 L57,70 Q57,76 52,76 Q47,76 47,70 Z" android:fillColor="#4A4A4A" />
+    <path android:pathData="M51,66 m-1.4,0 a1.4,1.4 0 1,0 2.8,0 a1.4,1.4 0 1,0 -2.8,0" android:fillColor="#FFFFFF" />
 
-    <!-- Liquid inside flask 2 -->
-    <path
-        android:pathData="M31,62 L65,62 L67,71 Q67,76 61,76 L35,76 Q29,76 29,71 Z"
-        android:fillColor="#1A1A1A" />
-
-    <!-- Bubble highlight -->
-    <path
-        android:pathData="M46.5,68 m-2.5,0 a2.5,2.5 0 1,0 5,0 a2.5,2.5 0 1,0 -5,0"
-        android:fillColor="#FFFFFF" />
-
-    <!-- Blue "+" badge -->
-    <path
-        android:pathData="M86,86 m-19,0 a19,19 0 1,0 38,0 a19,19 0 1,0 -38,0"
-        android:fillColor="#2F80ED" />
-    <path
-        android:pathData="M76,83 L96,83 L96,89 L76,89 Z"
-        android:fillColor="#FFFFFF" />
-    <path
-        android:pathData="M83,76 L89,76 L89,96 L83,96 Z"
-        android:fillColor="#FFFFFF" />
+    <!-- Flat blue "+" -->
+    <path android:pathData="M84,90 L104,90 L104,96 L84,96 Z" android:fillColor="#2F80ED" />
+    <path android:pathData="M91,83 L97,83 L97,103 L91,103 Z" android:fillColor="#2F80ED" />
 </vector>

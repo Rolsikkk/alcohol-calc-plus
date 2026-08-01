@@ -81,7 +81,7 @@ fun TimerScreen(onBack: () -> Unit, viewModel: TimerViewModel = viewModel()) {
             }
         }
 
-        Spacer(modifier = Modifier.height(64.dp))
+        Spacer(modifier = Modifier.height(120.dp))
 
         OutlinedButton(
             onClick = viewModel::resetStopwatch,
