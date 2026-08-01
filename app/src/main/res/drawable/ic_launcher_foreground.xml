@@ -3,13 +3,56 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
+
+    <!-- Flask 1: back-left, short conical flask -->
     <path
-        android:fillColor="#1F6F54"
-        android:pathData="M48,26 h12 v18 h-12 z" />
+        android:pathData="M22,24 L30,24 L30,38 L42,66 Q42,72 36,72 L14,72 Q8,72 8,66 L22,38 Z"
+        android:strokeColor="#1A1A1A"
+        android:strokeWidth="3"
+        android:strokeLineJoin="round"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
+
+    <!-- Flask 3: right, round-bottom flask (drawn before flask 2 so flask 2 sits in front) -->
     <path
-        android:fillColor="#1F6F54"
-        android:pathData="M54,40 m-22,0 a22,22 0,1 1,44 0 a22,22 0,1 1,-44 0" />
+        android:pathData="M76,26 L84,26 L84,46 L76,46 Z"
+        android:strokeColor="#1A1A1A"
+        android:strokeWidth="3"
+        android:strokeLineJoin="round"
+        android:fillColor="#FFFFFF" />
     <path
-        android:fillColor="#E3F2EC"
-        android:pathData="M54,40 m-13,0 a13,13 0,1 1,26 0 a13,13 0,1 1,-26 0" />
+        android:pathData="M63,64 a17,17 0 1,0 34,0 a17,17 0 1,0 -34,0"
+        android:strokeColor="#1A1A1A"
+        android:strokeWidth="3"
+        android:fillColor="#FFFFFF" />
+
+    <!-- Flask 2: middle, tall conical flask (front-center) -->
+    <path
+        android:pathData="M46,12 L56,12 L56,32 L70,72 Q70,80 62,80 L34,80 Q26,80 26,72 L46,32 Z"
+        android:strokeColor="#1A1A1A"
+        android:strokeWidth="3"
+        android:strokeLineJoin="round"
+        android:strokeLineCap="round"
+        android:fillColor="#FFFFFF" />
+
+    <!-- Liquid inside flask 2 -->
+    <path
+        android:pathData="M31,62 L65,62 L67,71 Q67,76 61,76 L35,76 Q29,76 29,71 Z"
+        android:fillColor="#1A1A1A" />
+
+    <!-- Bubble highlight -->
+    <path
+        android:pathData="M46.5,68 m-2.5,0 a2.5,2.5 0 1,0 5,0 a2.5,2.5 0 1,0 -5,0"
+        android:fillColor="#FFFFFF" />
+
+    <!-- Blue "+" badge -->
+    <path
+        android:pathData="M86,86 m-19,0 a19,19 0 1,0 38,0 a19,19 0 1,0 -38,0"
+        android:fillColor="#2F80ED" />
+    <path
+        android:pathData="M76,83 L96,83 L96,89 L76,89 Z"
+        android:fillColor="#FFFFFF" />
+    <path
+        android:pathData="M83,76 L89,76 L89,96 L83,96 Z"
+        android:fillColor="#FFFFFF" />
 </vector>

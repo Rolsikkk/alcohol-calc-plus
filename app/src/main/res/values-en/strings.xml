@@ -92,7 +92,9 @@
     <string name="update_available_message">Version %1$s is available. Download and install it?</string>
     <string name="update_action_update">Update</string>
     <string name="update_action_later">Later</string>
-    <string name="update_downloading_title">Downloading update…</string>
+    <string name="update_downloading_title">Downloading %1$s…</string>
+    <string name="update_progress_known">%1$d%% — %2$.1f of %3$.1f MB</string>
+    <string name="update_progress_unknown">Downloaded %1$.1f MB…</string>
     <string name="update_failed_title">Download failed</string>
     <string name="update_failed_message">Check your internet connection and try again.</string>
     <string name="update_action_retry">Retry</string>

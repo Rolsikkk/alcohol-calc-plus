@@ -5,8 +5,10 @@ import android.content.Intent
 import android.net.Uri
 import androidx.core.content.FileProvider
 import com.homedistill.alcoholcalc.core.update.isNewerVersion
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import org.json.JSONObject
 import java.io.File
 import java.net.HttpURLConnection
@@ -18,11 +20,19 @@ data class UpdateInfo(
     val assetName: String,
 )
 
+/** Download progress: [bytesRead] so far, [totalBytes] from Content-Length or -1 if unknown. */
+data class DownloadProgress(val bytesRead: Long, val totalBytes: Long) {
+    val percent: Int? get() = if (totalBytes > 0) ((bytesRead * 100) / totalBytes).toInt() else null
+}
+
 private const val REPO_OWNER = "Rolsikkk"
 private const val REPO_NAME = "alcohol-calc-plus"
 private const val LATEST_RELEASE_URL = "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/releases/latest"
+private const val USER_AGENT = "$REPO_NAME-app"
 private const val CONNECT_TIMEOUT_MS = 10_000
-private const val READ_TIMEOUT_MS = 10_000
+private const val READ_TIMEOUT_MS = 15_000
+private const val DOWNLOAD_OVERALL_TIMEOUT_MS = 300_000L
+private const val PROGRESS_UPDATE_STEP_BYTES = 32 * 1024
 
 class UpdateRepository(private val context: Context) {
 
@@ -48,30 +58,65 @@ class UpdateRepository(private val context: Context) {
             if (downloadUrl.isNullOrBlank() || assetName == null) return@withContext null
 
             UpdateInfo(versionTag = tag, downloadUrl = downloadUrl, assetName = assetName)
+        } catch (e: CancellationException) {
+            throw e
         } catch (_: Exception) {
             null
         }
     }
 
-    /** Downloads the APK to the app's cache dir. Returns the file, or null on failure. */
-    suspend fun downloadApk(info: UpdateInfo): File? = withContext(Dispatchers.IO) {
-        try {
-            val updatesDir = File(context.cacheDir, "updates").apply { mkdirs() }
-            val outFile = File(updatesDir, info.assetName)
-            val connection = (URL(info.downloadUrl).openConnection() as HttpURLConnection).apply {
-                connectTimeout = CONNECT_TIMEOUT_MS
-                readTimeout = READ_TIMEOUT_MS
-                instanceFollowRedirects = true
+    /**
+     * Downloads the APK to the app's cache dir, reporting progress via [onProgress].
+     * Gives up after [DOWNLOAD_OVERALL_TIMEOUT_MS] so a stalled connection fails instead of
+     * spinning forever. Returns the file, or null on failure/timeout.
+     */
+    suspend fun downloadApk(info: UpdateInfo, onProgress: (DownloadProgress) -> Unit): File? =
+        withContext(Dispatchers.IO) {
+            withTimeoutOrNull(DOWNLOAD_OVERALL_TIMEOUT_MS) {
+                try {
+                    val updatesDir = File(context.cacheDir, "updates").apply { mkdirs() }
+                    val outFile = File(updatesDir, info.assetName)
+                    val connection = (URL(info.downloadUrl).openConnection() as HttpURLConnection).apply {
+                        connectTimeout = CONNECT_TIMEOUT_MS
+                        readTimeout = READ_TIMEOUT_MS
+                        instanceFollowRedirects = true
+                        setRequestProperty("User-Agent", USER_AGENT)
+                    }
+                    try {
+                        if (connection.responseCode !in 200..299) return@withTimeoutOrNull null
+                        val totalBytes = connection.contentLengthLong
+
+                        connection.inputStream.use { input ->
+                            outFile.outputStream().use { output ->
+                                val buffer = ByteArray(8 * 1024)
+                                var bytesRead = 0L
+                                var bytesSinceLastUpdate = 0
+                                onProgress(DownloadProgress(0L, totalBytes))
+                                while (true) {
+                                    val read = input.read(buffer)
+                                    if (read == -1) break
+                                    output.write(buffer, 0, read)
+                                    bytesRead += read
+                                    bytesSinceLastUpdate += read
+                                    if (bytesSinceLastUpdate >= PROGRESS_UPDATE_STEP_BYTES) {
+                                        bytesSinceLastUpdate = 0
+                                        onProgress(DownloadProgress(bytesRead, totalBytes))
+                                    }
+                                }
+                                onProgress(DownloadProgress(bytesRead, totalBytes))
+                            }
+                        }
+                        outFile
+                    } finally {
+                        connection.disconnect()
+                    }
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (_: Exception) {
+                    null
+                }
             }
-            connection.inputStream.use { input ->
-                outFile.outputStream().use { output -> input.copyTo(output) }
-            }
-            connection.disconnect()
-            outFile
-        } catch (_: Exception) {
-            null
         }
-    }
 
     /** Launches the system package installer for the downloaded APK. */
     fun installApk(file: File) {
@@ -89,6 +134,7 @@ class UpdateRepository(private val context: Context) {
             readTimeout = READ_TIMEOUT_MS
             requestMethod = "GET"
             setRequestProperty("Accept", "application/vnd.github+json")
+            setRequestProperty("User-Agent", USER_AGENT)
         }
         return try {
             if (connection.responseCode != HttpURLConnection.HTTP_OK) return null
