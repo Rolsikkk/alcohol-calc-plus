@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -109,10 +111,15 @@ fun UpdateGate() {
 @Composable
 private fun DownloadProgressContent(progress: DownloadProgress) {
     val percent = progress.percent
+    val animatedFraction by animateFloatAsState(
+        targetValue = (percent ?: 0) / 100f,
+        animationSpec = tween(400),
+        label = "downloadProgress",
+    )
     Column(modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
         if (percent != null) {
             LinearProgressIndicator(
-                progress = { percent / 100f },
+                progress = { animatedFraction },
                 modifier = Modifier.fillMaxWidth(),
             )
         } else {

@@ -1,11 +1,16 @@
 package com.homedistill.alcoholcalc.ui.screens.timer
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,6 +28,8 @@ import com.homedistill.alcoholcalc.ui.components.CalculatorScaffold
 import com.homedistill.alcoholcalc.ui.components.DASH
 import com.homedistill.alcoholcalc.ui.components.FieldCard
 import com.homedistill.alcoholcalc.ui.components.LabeledValueRow
+import com.homedistill.alcoholcalc.ui.components.OutlinedActionButton
+import com.homedistill.alcoholcalc.ui.components.PrimaryActionButton
 import com.homedistill.alcoholcalc.ui.theme.AppFieldColors
 
 @Composable
@@ -54,42 +61,31 @@ fun TimerScreen(onBack: () -> Unit, viewModel: TimerViewModel = viewModel()) {
             )
         }
 
-        Text(
-            text = formatMmSs(elapsedSeconds),
-            style = MaterialTheme.typography.titleLarge.copy(fontSize = 40.sp),
-            textAlign = TextAlign.Center,
+        AnimatedContent(
+            targetState = elapsedSeconds,
+            transitionSpec = {
+                (slideInVertically(tween(220)) { it / 4 } + fadeIn(tween(220))) togetherWith
+                    (slideOutVertically(tween(220)) { -it / 4 } + fadeOut(tween(150)))
+            },
             modifier = Modifier.fillMaxWidth(),
-        )
+            label = "stopwatchDisplay",
+        ) { seconds ->
+            Text(
+                text = formatMmSs(seconds),
+                style = MaterialTheme.typography.titleLarge.copy(fontSize = 40.sp),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
 
         if (isRunning) {
-            OutlinedButton(
-                onClick = viewModel::stopStopwatch,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-            ) {
-                Text(stringResource(R.string.timer_stop), style = MaterialTheme.typography.titleMedium)
-            }
+            OutlinedActionButton(label = stringResource(R.string.timer_stop), onClick = viewModel::stopStopwatch)
         } else {
-            Button(
-                onClick = viewModel::startStopwatch,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-            ) {
-                Text(stringResource(R.string.timer_start), style = MaterialTheme.typography.titleMedium)
-            }
+            PrimaryActionButton(label = stringResource(R.string.timer_start), onClick = viewModel::startStopwatch)
         }
 
         Spacer(modifier = Modifier.height(120.dp))
 
-        OutlinedButton(
-            onClick = viewModel::resetStopwatch,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
-        ) {
-            Text(stringResource(R.string.timer_reset), style = MaterialTheme.typography.titleMedium)
-        }
+        OutlinedActionButton(label = stringResource(R.string.timer_reset), onClick = viewModel::resetStopwatch)
     }
 }
