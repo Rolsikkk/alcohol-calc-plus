@@ -1,25 +1,13 @@
 package com.homedistill.alcoholcalc.ui.components
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -31,7 +19,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
@@ -50,26 +37,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.homedistill.alcoholcalc.ui.theme.AppFieldColors
 
 const val DASH = "—"
-
-/** Animated scale factor (1f normally, [pressedScale] while pressed) for tactile button feedback. */
-@Composable
-fun rememberPressScale(interactionSource: MutableInteractionSource, pressedScale: Float = 0.95f): Float {
-    val pressed by interactionSource.collectIsPressedAsState()
-    val scale by animateFloatAsState(if (pressed) pressedScale else 1f, label = "pressScale")
-    return scale
-}
 
 /** Screen scaffold shared by every calculator: dark top bar with a back button, scrollable content. */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -225,7 +202,6 @@ private fun ValueBox(
     modifier: Modifier = Modifier,
 ) {
     val readOnly = onValueChange == null
-    val animatedBackground by animateColorAsState(background, label = "valueBoxBackground")
     val textStyle = TextStyle(
         color = color,
         fontSize = 20.sp,
@@ -233,22 +209,16 @@ private fun ValueBox(
         textAlign = TextAlign.Center,
     )
     val boxModifier = modifier
-        .background(animatedBackground, RoundedCornerShape(4.dp))
+        .background(background, RoundedCornerShape(4.dp))
         .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(4.dp))
         .padding(horizontal = 8.dp, vertical = 10.dp)
 
     if (readOnly) {
-        AnimatedContent(
-            targetState = value,
-            transitionSpec = {
-                (slideInVertically(tween(200)) { it / 2 } + fadeIn(tween(200))) togetherWith
-                    (slideOutVertically(tween(200)) { -it / 2 } + fadeOut(tween(150)))
-            },
+        Text(
+            text = value,
+            style = textStyle,
             modifier = boxModifier.fillMaxWidth(),
-            label = "valueBoxContent",
-        ) { animatedValue ->
-            Text(text = animatedValue, style = textStyle, modifier = Modifier.fillMaxWidth())
-        }
+        )
     } else {
         BasicTextField(
             value = value,
@@ -275,19 +245,15 @@ fun StepperButtons(onDecrement: () -> Unit, onIncrement: () -> Unit, modifier: M
 
 @Composable
 private fun StepperButton(symbol: String, onClick: () -> Unit) {
-    val interactionSource = remember { MutableInteractionSource() }
-    val scale = rememberPressScale(interactionSource, pressedScale = 0.88f)
-
     Row(
         modifier = Modifier
             .size(32.dp)
-            .graphicsLayer { scaleX = scale; scaleY = scale }
             .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(4.dp))
             .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(4.dp)),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        IconButton(onClick = onClick, interactionSource = interactionSource, modifier = Modifier.size(32.dp)) {
+        IconButton(onClick = onClick, modifier = Modifier.size(32.dp)) {
             Text(symbol, style = MaterialTheme.typography.titleLarge, color = LocalContentColor.current)
         }
     }
@@ -305,53 +271,8 @@ fun PlainResultLine(label: String, value: String, color: Color = AppFieldColors.
 /** Full-width outlined reset button matching the reference app's muted "СБРОС" button. */
 @Composable
 fun ResetButton(label: String, onClick: () -> Unit) {
-    val interactionSource = remember { MutableInteractionSource() }
-    val scale = rememberPressScale(interactionSource, pressedScale = 0.97f)
-
-    OutlinedButton(
-        onClick = onClick,
-        interactionSource = interactionSource,
-        modifier = Modifier
-            .fillMaxWidth()
-            .graphicsLayer { scaleX = scale; scaleY = scale },
-    ) {
+    OutlinedButton(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
         Text(label)
-    }
-}
-
-/** Full-width filled action button (e.g. "Start") with tactile press-scale feedback. */
-@Composable
-fun PrimaryActionButton(label: String, onClick: () -> Unit, modifier: Modifier = Modifier, height: Dp = 56.dp) {
-    val interactionSource = remember { MutableInteractionSource() }
-    val scale = rememberPressScale(interactionSource)
-
-    Button(
-        onClick = onClick,
-        interactionSource = interactionSource,
-        modifier = modifier
-            .fillMaxWidth()
-            .height(height)
-            .graphicsLayer { scaleX = scale; scaleY = scale },
-    ) {
-        Text(label, style = MaterialTheme.typography.titleMedium)
-    }
-}
-
-/** Full-width outlined action button (e.g. "Stop") with tactile press-scale feedback. */
-@Composable
-fun OutlinedActionButton(label: String, onClick: () -> Unit, modifier: Modifier = Modifier, height: Dp = 56.dp) {
-    val interactionSource = remember { MutableInteractionSource() }
-    val scale = rememberPressScale(interactionSource)
-
-    OutlinedButton(
-        onClick = onClick,
-        interactionSource = interactionSource,
-        modifier = modifier
-            .fillMaxWidth()
-            .height(height)
-            .graphicsLayer { scaleX = scale; scaleY = scale },
-    ) {
-        Text(label, style = MaterialTheme.typography.titleMedium)
     }
 }
 

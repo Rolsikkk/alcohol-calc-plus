@@ -1,10 +1,5 @@
 package com.homedistill.alcoholcalc.ui.navigation
 
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -23,28 +18,12 @@ import com.homedistill.alcoholcalc.ui.screens.timer.TimerScreen
 
 private const val ROUTE_HOME = "home"
 private const val ROUTE_SETTINGS = "settings"
-private const val TRANSITION_MS = 260
 
 @Composable
 fun AppNavHost() {
     val navController: NavHostController = rememberNavController()
 
-    NavHost(
-        navController = navController,
-        startDestination = ROUTE_HOME,
-        enterTransition = {
-            slideInHorizontally(tween(TRANSITION_MS)) { it / 4 } + fadeIn(tween(TRANSITION_MS))
-        },
-        exitTransition = {
-            slideOutHorizontally(tween(TRANSITION_MS)) { -it / 4 } + fadeOut(tween(TRANSITION_MS))
-        },
-        popEnterTransition = {
-            slideInHorizontally(tween(TRANSITION_MS)) { -it / 4 } + fadeIn(tween(TRANSITION_MS))
-        },
-        popExitTransition = {
-            slideOutHorizontally(tween(TRANSITION_MS)) { it / 4 } + fadeOut(tween(TRANSITION_MS))
-        },
-    ) {
+    NavHost(navController = navController, startDestination = ROUTE_HOME) {
         composable(ROUTE_HOME) {
             HomeScreen(
                 onOpenTab = { tab -> navController.navigate(tab.route) },
