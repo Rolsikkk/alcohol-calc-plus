@@ -5,23 +5,16 @@ import androidx.lifecycle.viewModelScope
 import com.homedistill.alcoholcalc.core.calculators.SelectionRate
 import com.homedistill.alcoholcalc.core.calculators.calculateSelectionRate
 import com.homedistill.alcoholcalc.core.calculators.parseDecimalInput
-import kotlinx.coroutines.FlowPreview
+import com.homedistill.alcoholcalc.ui.common.debouncedResult
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
-private const val DEBOUNCE_MS = 150L
 private const val TICK_MS = 1000L
 
-@OptIn(FlowPreview::class)
 class TimerViewModel : ViewModel() {
 
     // --- Selection rate calculator ---
@@ -31,14 +24,11 @@ class TimerViewModel : ViewModel() {
     val volumeText: StateFlow<String> = _volumeText
     val timeText: StateFlow<String> = _timeText
 
-    val rate: StateFlow<SelectionRate?> = combine(_volumeText, _timeText) { v, t -> v to t }
-        .debounce(DEBOUNCE_MS)
-        .map { (v, t) ->
-            val volume = parseDecimalInput(v)
-            val time = parseDecimalInput(t)
-            if (volume == null || time == null) null else calculateSelectionRate(volume, time)
-        }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+    val rate: StateFlow<SelectionRate?> = debouncedResult(_volumeText, _timeText, initial = null) { (v, t) ->
+        val volume = parseDecimalInput(v)
+        val time = parseDecimalInput(t)
+        if (volume == null || time == null) null else calculateSelectionRate(volume, time)
+    }
 
     fun onVolumeChange(value: String) { _volumeText.value = value }
     fun onTimeChange(value: String) { _timeText.value = value }

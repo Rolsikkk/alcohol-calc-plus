@@ -11,10 +11,15 @@
 ## Стек
 
 - Kotlin + Jetpack Compose (Material 3), single-activity, Compose Navigation.
-- MVVM: по одному `ViewModel` на экран, состояние — `StateFlow`.
+- MVVM: по одному `ViewModel` на экран, состояние — `StateFlow`. Общий для всех
+  калькуляторов паттерн «debounce ввода → пересчёт» вынесен в один reusable
+  хелпер (`ui/common/DebouncedCalculation.kt`) вместо копипасты в каждом ViewModel.
 - Чистая логика расчётов вынесена в `core/calculators/*` — обычные Kotlin-функции
   без зависимостей от Android, покрыты unit-тестами JUnit (без эмулятора).
-- Настройки (видимые вкладки, язык RU/EN) — `androidx.datastore.preferences`.
+- Только светлая тема (системная тёмная тема игнорируется намеренно).
+- Настройки (видимые вкладки) — `androidx.datastore.preferences`. Язык
+  переключается через `AppCompatDelegate`/per-app language (официальный
+  механизм AndroidX) — без блокирующего чтения DataStore на старте.
 - minSdk 24, targetSdk 35, compileSdk 35.
 
 ## Как собрать
@@ -113,6 +118,16 @@ unit-тестами для каждого калькулятора.
 ректификации, итог на смешивании), остаются только для чтения — их обратный
 пересчёт потребовал бы решения всей формулы в обратную сторону и не
 реализован.
+
+## Производительность запуска
+
+Раньше `MainActivity.attachBaseContext` синхронно блокировал главный поток
+(`runBlocking`) на чтение языка из DataStore при каждом холодном старте — это
+единственная реальная точка, где приложение могло заметно тормозить при
+открытии. Убрано: язык теперь хранится через `AppCompatDelegate`/per-app
+language (`androidx.appcompat`, `AppLocalesMetadataHolderService` с
+`autoStoreLocales`), который читается и применяется движком AppCompat без
+блокирующего диска на старте активности.
 
 ## Проверка обновлений
 

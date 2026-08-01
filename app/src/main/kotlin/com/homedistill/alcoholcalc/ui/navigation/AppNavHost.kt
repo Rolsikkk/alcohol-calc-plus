@@ -20,7 +20,7 @@ private const val ROUTE_HOME = "home"
 private const val ROUTE_SETTINGS = "settings"
 
 @Composable
-fun AppNavHost(onLanguageChanged: () -> Unit) {
+fun AppNavHost() {
     val navController: NavHostController = rememberNavController()
 
     NavHost(navController = navController, startDestination = ROUTE_HOME) {
@@ -31,10 +31,7 @@ fun AppNavHost(onLanguageChanged: () -> Unit) {
             )
         }
         composable(ROUTE_SETTINGS) {
-            SettingsScreen(
-                onBack = navController::popBackStack,
-                onLanguageChanged = onLanguageChanged,
-            )
+            SettingsScreen(onBack = navController::popBackStack)
         }
         composable(CalculatorTab.DILUTION.route) {
             DilutionScreen(onBack = navController::popBackStack)

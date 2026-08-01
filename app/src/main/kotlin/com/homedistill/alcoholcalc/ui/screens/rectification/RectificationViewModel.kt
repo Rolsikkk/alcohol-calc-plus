@@ -1,7 +1,6 @@
 package com.homedistill.alcoholcalc.ui.screens.rectification
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.homedistill.alcoholcalc.core.calculators.DEFAULT_BODY_PCT
 import com.homedistill.alcoholcalc.core.calculators.DEFAULT_HEADS_PCT
 import com.homedistill.alcoholcalc.core.calculators.DEFAULT_TAILS_PCT
@@ -11,16 +10,10 @@ import com.homedistill.alcoholcalc.core.calculators.formatDecimal
 import com.homedistill.alcoholcalc.core.calculators.massFromVolume
 import com.homedistill.alcoholcalc.core.calculators.parseDecimalInput
 import com.homedistill.alcoholcalc.core.calculators.volumeFromMass
-import kotlinx.coroutines.FlowPreview
+import com.homedistill.alcoholcalc.ui.common.debouncedResult
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 
-private const val DEBOUNCE_MS = 150L
 private const val DEFAULT_V = "3000"
 private const val DEFAULT_P = "40"
 
@@ -29,7 +22,6 @@ private const val DEFAULT_P = "40"
  * dilution screen: editing ABV% keeps volume fixed and re-derives mass; editing
  * volume or mass keeps ABV% fixed and re-derives the other.
  */
-@OptIn(FlowPreview::class)
 class RectificationViewModel : ViewModel() {
 
     private val _vText = MutableStateFlow(DEFAULT_V)
@@ -46,24 +38,20 @@ class RectificationViewModel : ViewModel() {
     val bodyText: StateFlow<String> = _bodyText
     val tailsText: StateFlow<String> = _tailsText
 
-    val result: StateFlow<RectificationResult?> = combine(
-        combine(_vText, _pText) { v, p -> v to p },
-        combine(_headsText, _bodyText, _tailsText) { h, b, t -> Triple(h, b, t) },
-    ) { vp, hbt -> vp to hbt }
-        .debounce(DEBOUNCE_MS)
-        .map { (vp, hbt) ->
-            val v = parseDecimalInput(vp.first)
-            val p = parseDecimalInput(vp.second)
-            val heads = parseDecimalInput(hbt.first)
-            val body = parseDecimalInput(hbt.second)
-            val tails = parseDecimalInput(hbt.third)
-            if (v == null || p == null || heads == null || body == null || tails == null) {
-                null
-            } else {
-                calculateRectification(v, p, heads, body, tails)
-            }
+    val result: StateFlow<RectificationResult?> = debouncedResult(
+        _vText, _pText, _headsText, _bodyText, _tailsText, initial = null,
+    ) { (vText, pText, headsText, bodyText, tailsText) ->
+        val v = parseDecimalInput(vText)
+        val p = parseDecimalInput(pText)
+        val heads = parseDecimalInput(headsText)
+        val body = parseDecimalInput(bodyText)
+        val tails = parseDecimalInput(tailsText)
+        if (v == null || p == null || heads == null || body == null || tails == null) {
+            null
+        } else {
+            calculateRectification(v, p, heads, body, tails)
         }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+    }
 
     /** Volume edited directly: ABV% stays fixed, mass is re-derived. */
     fun onVChange(value: String) {

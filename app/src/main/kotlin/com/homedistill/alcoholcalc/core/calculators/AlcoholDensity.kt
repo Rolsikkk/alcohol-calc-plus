@@ -28,12 +28,17 @@ object AlcoholDensity {
         return (p / 100.0 * 100.0 * ETHANOL_DENSITY_20C) / (100.0 * densityFromAbv(p))
     }
 
-    /** Inverse of [massFractionFromAbv] via binary search; w is a mass fraction in [0, 1]. */
+    /**
+     * Inverse of [massFractionFromAbv] via binary search; w is a mass fraction in [0, 1].
+     * 30 iterations halve the initial [0, 100] range to ~9e-8, far past the ~0.001
+     * precision this app needs, without doing double the work like a larger iteration
+     * count would.
+     */
     fun abvFromMassFraction(w: Double): Double {
         val target = w.coerceIn(0.0, 1.0)
         var lo = 0.0
         var hi = 100.0
-        repeat(60) {
+        repeat(30) {
             val mid = (lo + hi) / 2.0
             if (massFractionFromAbv(mid) < target) lo = mid else hi = mid
         }

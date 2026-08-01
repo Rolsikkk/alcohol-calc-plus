@@ -1,5 +1,6 @@
 package com.homedistill.alcoholcalc.ui.screens.settings
 
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,11 +12,13 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
@@ -24,15 +27,15 @@ import com.homedistill.alcoholcalc.R
 import com.homedistill.alcoholcalc.data.CalculatorTabIds
 import com.homedistill.alcoholcalc.data.Language
 import com.homedistill.alcoholcalc.data.UserPreferencesRepository
+import com.homedistill.alcoholcalc.ui.components.CalculatorScaffold
 import com.homedistill.alcoholcalc.ui.components.FieldCard
 import com.homedistill.alcoholcalc.ui.components.HintText
-import com.homedistill.alcoholcalc.ui.components.CalculatorScaffold
 import com.homedistill.alcoholcalc.ui.navigation.CalculatorTab
+import java.util.Locale
 
 @Composable
 fun SettingsScreen(
     onBack: () -> Unit,
-    onLanguageChanged: () -> Unit,
     viewModel: SettingsViewModel = run {
         val context = LocalContext.current.applicationContext
         viewModel(
@@ -43,6 +46,14 @@ fun SettingsScreen(
     },
 ) {
     val settings by viewModel.settings.collectAsStateWithLifecycle()
+
+    // AppCompatDelegate recreates the Activity when the locale changes, so a plain
+    // synchronous read here (no DataStore, no coroutine) is always up to date.
+    val currentLanguage = remember {
+        AppCompatDelegate.getApplicationLocales().get(0)?.language
+            ?: Locale.getDefault().language.takeIf { it == Language.EN }
+            ?: Language.RU
+    }
 
     CalculatorScaffold(title = stringResource(R.string.tab_settings), onBack = onBack) {
         FieldCard(title = stringResource(R.string.settings_visible_tabs)) {
@@ -69,18 +80,22 @@ fun SettingsScreen(
         FieldCard(title = stringResource(R.string.settings_language)) {
             LanguageOption(
                 label = stringResource(R.string.settings_language_ru),
-                selected = settings.language == Language.RU,
-                onSelect = { viewModel.setLanguage(Language.RU, onComplete = onLanguageChanged) },
+                selected = currentLanguage == Language.RU,
+                onSelect = { setAppLanguage(Language.RU) },
             )
             LanguageOption(
                 label = stringResource(R.string.settings_language_en),
-                selected = settings.language == Language.EN,
-                onSelect = { viewModel.setLanguage(Language.EN, onComplete = onLanguageChanged) },
+                selected = currentLanguage == Language.EN,
+                onSelect = { setAppLanguage(Language.EN) },
             )
         }
 
         HintText(stringResource(R.string.settings_hint))
     }
+}
+
+private fun setAppLanguage(languageTag: String) {
+    AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(languageTag))
 }
 
 @Composable

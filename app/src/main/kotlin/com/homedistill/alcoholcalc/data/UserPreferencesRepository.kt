@@ -2,7 +2,6 @@ package com.homedistill.alcoholcalc.data
 
 import android.content.Context
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
@@ -14,14 +13,10 @@ class UserPreferencesRepository(private val context: Context) {
 
     private object Keys {
         val VISIBLE_TABS = stringSetPreferencesKey("visible_tabs")
-        val LANGUAGE = stringPreferencesKey("language")
     }
 
     val settingsFlow: Flow<AppSettings> = context.dataStore.data.map { prefs ->
-        AppSettings(
-            visibleTabs = prefs[Keys.VISIBLE_TABS] ?: CalculatorTabIds.ALL,
-            language = prefs[Keys.LANGUAGE] ?: Language.RU,
-        )
+        AppSettings(visibleTabs = prefs[Keys.VISIBLE_TABS] ?: CalculatorTabIds.ALL)
     }
 
     suspend fun setTabVisible(tabId: String, visible: Boolean) {
@@ -29,12 +24,6 @@ class UserPreferencesRepository(private val context: Context) {
         context.dataStore.edit { prefs ->
             val current = prefs[Keys.VISIBLE_TABS] ?: CalculatorTabIds.ALL
             prefs[Keys.VISIBLE_TABS] = if (visible) current + tabId else current - tabId
-        }
-    }
-
-    suspend fun setLanguage(language: String) {
-        context.dataStore.edit { prefs ->
-            prefs[Keys.LANGUAGE] = language
         }
     }
 }

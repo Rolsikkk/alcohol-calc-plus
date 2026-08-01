@@ -17,6 +17,7 @@ object CalculatorTabIds {
     val LOCKED = setOf(DILUTION)
 }
 
+/** Language codes accepted by AppCompatDelegate.setApplicationLocales(). */
 object Language {
     const val RU = "ru"
     const val EN = "en"
@@ -24,5 +25,4 @@ object Language {
 
 data class AppSettings(
     val visibleTabs: Set<String> = CalculatorTabIds.ALL,
-    val language: String = Language.RU,
 )
