@@ -38,7 +38,6 @@
     <string name="mixing_result">Результат</string>
 
     <string name="timer_volume">объём отобранного (мл)</string>
-    <string name="timer_time">время отбора (с)</string>
     <string name="timer_ml_per_hour">отберём за час (мл/ч)</string>
     <string name="timer_ml_per_min">отберём за минуту (мл/мин)</string>
     <string name="timer_start">ЗАПУСТИТЬ ТАЙМЕР</string>

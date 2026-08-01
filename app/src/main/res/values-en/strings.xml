@@ -38,7 +38,6 @@
     <string name="mixing_result">Result</string>
 
     <string name="timer_volume">collected volume (mL)</string>
-    <string name="timer_time">collection time (s)</string>
     <string name="timer_ml_per_hour">rate per hour (mL/h)</string>
     <string name="timer_ml_per_min">rate per minute (mL/min)</string>
     <string name="timer_start">START TIMER</string>

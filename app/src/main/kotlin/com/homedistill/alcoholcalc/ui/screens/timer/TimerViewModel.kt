@@ -5,39 +5,39 @@ import androidx.lifecycle.viewModelScope
 import com.homedistill.alcoholcalc.core.calculators.SelectionRate
 import com.homedistill.alcoholcalc.core.calculators.calculateSelectionRate
 import com.homedistill.alcoholcalc.core.calculators.parseDecimalInput
-import com.homedistill.alcoholcalc.ui.common.debouncedResult
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 private const val TICK_MS = 1000L
 
+/**
+ * Volume is the only manual input. Pressing Start runs a real stopwatch (wall-clock
+ * based, so it stays accurate across pauses), and the mL/h and mL/min rates are
+ * derived live from volume ÷ elapsed stopwatch time — there's no separate "time"
+ * field to fill in by hand.
+ */
 class TimerViewModel : ViewModel() {
 
-    // --- Selection rate calculator ---
     private val _volumeText = MutableStateFlow("500")
-    private val _timeText = MutableStateFlow("600")
-
     val volumeText: StateFlow<String> = _volumeText
-    val timeText: StateFlow<String> = _timeText
-
-    val rate: StateFlow<SelectionRate?> = debouncedResult(_volumeText, _timeText, initial = null) { (v, t) ->
-        val volume = parseDecimalInput(v)
-        val time = parseDecimalInput(t)
-        if (volume == null || time == null) null else calculateSelectionRate(volume, time)
-    }
-
     fun onVolumeChange(value: String) { _volumeText.value = value }
-    fun onTimeChange(value: String) { _timeText.value = value }
 
-    // --- Real stopwatch, computed from wall-clock deltas so it stays accurate across pauses ---
     private val _isRunning = MutableStateFlow(false)
     private val _elapsedSeconds = MutableStateFlow(0L)
     val isRunning: StateFlow<Boolean> = _isRunning
     val elapsedSeconds: StateFlow<Long> = _elapsedSeconds
+
+    val rate: StateFlow<SelectionRate?> = combine(_volumeText, _elapsedSeconds) { volumeStr, elapsed ->
+        val volume = parseDecimalInput(volumeStr)
+        if (volume == null) null else calculateSelectionRate(volume, elapsed.toDouble())
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
     private var startEpochMs: Long = 0L
     private var accumulatedMs: Long = 0L

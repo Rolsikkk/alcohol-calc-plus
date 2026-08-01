@@ -28,7 +28,6 @@ import com.homedistill.alcoholcalc.ui.theme.AppFieldColors
 @Composable
 fun TimerScreen(onBack: () -> Unit, viewModel: TimerViewModel = viewModel()) {
     val volume by viewModel.volumeText.collectAsStateWithLifecycle()
-    val time by viewModel.timeText.collectAsStateWithLifecycle()
     val rate by viewModel.rate.collectAsStateWithLifecycle()
     val isRunning by viewModel.isRunning.collectAsStateWithLifecycle()
     val elapsedSeconds by viewModel.elapsedSeconds.collectAsStateWithLifecycle()
@@ -39,12 +38,6 @@ fun TimerScreen(onBack: () -> Unit, viewModel: TimerViewModel = viewModel()) {
                 label = stringResource(R.string.timer_volume),
                 value = volume,
                 onValueChange = viewModel::onVolumeChange,
-                color = AppFieldColors.Neutral,
-            )
-            LabeledValueRow(
-                label = stringResource(R.string.timer_time),
-                value = time,
-                onValueChange = viewModel::onTimeChange,
                 color = AppFieldColors.Neutral,
             )
             LabeledValueRow(
