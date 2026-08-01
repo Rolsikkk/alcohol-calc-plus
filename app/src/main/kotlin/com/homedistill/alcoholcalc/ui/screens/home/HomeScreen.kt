@@ -70,7 +70,7 @@ fun HomeScreen(
                 .padding(padding),
         ) {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
-                items(visibleTabs) { tab ->
+                items(visibleTabs, key = { it.id }) { tab ->
                     HomeListItem(
                         icon = tab.icon,
                         title = stringResource(tab.titleRes),

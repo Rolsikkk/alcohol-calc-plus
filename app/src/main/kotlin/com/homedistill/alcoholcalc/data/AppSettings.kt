@@ -1,5 +1,7 @@
 package com.homedistill.alcoholcalc.data
 
+import androidx.compose.runtime.Immutable
+
 /** All eight calculator tab ids shown on the home screen, used as DataStore keys. */
 object CalculatorTabIds {
     const val DILUTION = "dilution"
@@ -23,6 +25,13 @@ object Language {
     const val EN = "en"
 }
 
+/**
+ * [visibleTabs] is always replaced wholesale (never mutated in place) by
+ * [UserPreferencesRepository], so it's safe to mark this stable for Compose —
+ * otherwise the compiler treats the plain [Set] as unstable and skips fewer
+ * recompositions than it could.
+ */
+@Immutable
 data class AppSettings(
     val visibleTabs: Set<String> = CalculatorTabIds.ALL,
 )
