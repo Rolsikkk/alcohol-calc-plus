@@ -62,19 +62,34 @@ fun TimerScreen(onBack: () -> Unit, viewModel: TimerViewModel = viewModel()) {
         )
 
         if (isRunning) {
-            OutlinedButton(onClick = viewModel::stopStopwatch, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.timer_stop))
+            OutlinedButton(
+                onClick = viewModel::stopStopwatch,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+            ) {
+                Text(stringResource(R.string.timer_stop), style = MaterialTheme.typography.titleMedium)
             }
         } else {
-            Button(onClick = viewModel::startStopwatch, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.timer_start))
+            Button(
+                onClick = viewModel::startStopwatch,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+            ) {
+                Text(stringResource(R.string.timer_start), style = MaterialTheme.typography.titleMedium)
             }
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(64.dp))
 
-        OutlinedButton(onClick = viewModel::resetStopwatch, modifier = Modifier.fillMaxWidth()) {
-            Text(stringResource(R.string.timer_reset))
+        OutlinedButton(
+            onClick = viewModel::resetStopwatch,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
+        ) {
+            Text(stringResource(R.string.timer_reset), style = MaterialTheme.typography.titleMedium)
         }
     }
 }
