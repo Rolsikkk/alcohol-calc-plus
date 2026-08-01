@@ -1,7 +1,8 @@
 package com.homedistill.alcoholcalc.ui.screens.timer
 
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -32,20 +33,7 @@ fun TimerScreen(onBack: () -> Unit, viewModel: TimerViewModel = viewModel()) {
     val isRunning by viewModel.isRunning.collectAsStateWithLifecycle()
     val elapsedSeconds by viewModel.elapsedSeconds.collectAsStateWithLifecycle()
 
-    CalculatorScaffold(
-        title = stringResource(R.string.tab_timer),
-        onBack = onBack,
-        bottomBar = {
-            OutlinedButton(
-                onClick = viewModel::resetStopwatch,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-            ) {
-                Text(stringResource(R.string.timer_reset))
-            }
-        },
-    ) {
+    CalculatorScaffold(title = stringResource(R.string.tab_timer), onBack = onBack) {
         FieldCard {
             LabeledValueRow(
                 label = stringResource(R.string.timer_volume),
@@ -88,6 +76,12 @@ fun TimerScreen(onBack: () -> Unit, viewModel: TimerViewModel = viewModel()) {
             Button(onClick = viewModel::startStopwatch, modifier = Modifier.fillMaxWidth()) {
                 Text(stringResource(R.string.timer_start))
             }
+        }
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        OutlinedButton(onClick = viewModel::resetStopwatch, modifier = Modifier.fillMaxWidth()) {
+            Text(stringResource(R.string.timer_reset))
         }
     }
 }
