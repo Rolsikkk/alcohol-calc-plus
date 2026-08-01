@@ -70,18 +70,12 @@ fun SettingsScreen(
             LanguageOption(
                 label = stringResource(R.string.settings_language_ru),
                 selected = settings.language == Language.RU,
-                onSelect = {
-                    viewModel.setLanguage(Language.RU)
-                    onLanguageChanged()
-                },
+                onSelect = { viewModel.setLanguage(Language.RU, onComplete = onLanguageChanged) },
             )
             LanguageOption(
                 label = stringResource(R.string.settings_language_en),
                 selected = settings.language == Language.EN,
-                onSelect = {
-                    viewModel.setLanguage(Language.EN)
-                    onLanguageChanged()
-                },
+                onSelect = { viewModel.setLanguage(Language.EN, onComplete = onLanguageChanged) },
             )
         }
 

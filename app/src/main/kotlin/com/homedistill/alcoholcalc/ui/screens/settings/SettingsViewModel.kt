@@ -18,7 +18,15 @@ class SettingsViewModel(private val repository: UserPreferencesRepository) : Vie
         viewModelScope.launch { repository.setTabVisible(tabId, visible) }
     }
 
-    fun setLanguage(language: String) {
-        viewModelScope.launch { repository.setLanguage(language) }
+    /**
+     * Persists the language choice and only then invokes [onComplete]. The write must be
+     * confirmed before the caller recreates the Activity, otherwise attachBaseContext's
+     * synchronous read can race the async write and pick up the stale language.
+     */
+    fun setLanguage(language: String, onComplete: () -> Unit) {
+        viewModelScope.launch {
+            repository.setLanguage(language)
+            onComplete()
+        }
     }
 }
