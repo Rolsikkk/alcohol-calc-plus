@@ -2,18 +2,26 @@ package com.homedistill.alcoholcalc.ui.components
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -30,8 +38,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
@@ -42,6 +50,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,6 +60,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -59,15 +71,27 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.homedistill.alcoholcalc.ui.effects.ConfettiBurst
 import com.homedistill.alcoholcalc.ui.theme.AppFieldColors
 
 const val DASH = "—"
 
-/** Animated scale factor (1f normally, [pressedScale] while pressed) for tactile button feedback. */
+/**
+ * Animated scale factor (1f normally, [pressedScale] while pressed) with a springy
+ * overshoot, plus a haptic tick on press-down, for tactile button feedback.
+ */
 @Composable
-fun rememberPressScale(interactionSource: MutableInteractionSource, pressedScale: Float = 0.95f): Float {
+fun rememberPressScale(interactionSource: MutableInteractionSource, pressedScale: Float = 0.93f): Float {
     val pressed by interactionSource.collectIsPressedAsState()
-    val scale by animateFloatAsState(if (pressed) pressedScale else 1f, label = "pressScale")
+    val haptic = LocalHapticFeedback.current
+    LaunchedEffect(pressed) {
+        if (pressed) haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+    }
+    val scale by animateFloatAsState(
+        targetValue = if (pressed) pressedScale else 1f,
+        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMedium),
+        label = "pressScale",
+    )
     return scale
 }
 
@@ -134,8 +158,8 @@ fun FieldCard(title: String? = null, content: @Composable ColumnScope.() -> Unit
 /**
  * One cell of a value grid (e.g. the mL / g / % triplet): a bordered box with large
  * centered, color-coded text, and a small unit caption underneath. Editable when
- * [onValueChange] is non-null; the box turns pale yellow while focused, matching the
- * reference app's "active field" highlight.
+ * [onValueChange] is non-null; the box pulses with a glowing border while focused,
+ * matching the reference app's "active field" highlight.
  */
 @Composable
 fun RowScope.GridCell(
@@ -164,6 +188,7 @@ fun RowScope.GridCell(
             onValueChange = onValueChange,
             color = color,
             background = background,
+            glow = focused,
             onFocusChange = { focused = it },
         )
         Text(
@@ -209,11 +234,15 @@ fun LabeledValueRow(
             onValueChange = onValueChange,
             color = color,
             background = background,
+            glow = focused || highlighted,
             onFocusChange = { focused = it },
             modifier = Modifier.width(130.dp),
         )
     }
 }
+
+private val GlowColorLow = Color(0xFFFFA000)
+private val GlowColorHigh = Color(0xFFFFEE58)
 
 @Composable
 private fun ValueBox(
@@ -221,6 +250,7 @@ private fun ValueBox(
     onValueChange: ((String) -> Unit)?,
     color: Color,
     background: Color,
+    glow: Boolean,
     onFocusChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -232,17 +262,32 @@ private fun ValueBox(
         fontWeight = FontWeight.SemiBold,
         textAlign = TextAlign.Center,
     )
+
+    val infiniteTransition = rememberInfiniteTransition(label = "fieldGlow")
+    val glowPulse by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(tween(650, easing = FastOutSlowInEasing), RepeatMode.Reverse),
+        label = "glowPulse",
+    )
+    val borderWidth = if (glow) (1.5f + 2f * glowPulse).dp else 1.dp
+    val borderColor = if (glow) lerp(GlowColorLow, GlowColorHigh, glowPulse) else MaterialTheme.colorScheme.outline
+
     val boxModifier = modifier
         .background(animatedBackground, RoundedCornerShape(4.dp))
-        .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(4.dp))
+        .border(borderWidth, borderColor, RoundedCornerShape(4.dp))
         .padding(horizontal = 8.dp, vertical = 10.dp)
 
     if (readOnly) {
         AnimatedContent(
             targetState = value,
             transitionSpec = {
-                (slideInVertically(tween(200)) { it / 2 } + fadeIn(tween(200))) togetherWith
-                    (slideOutVertically(tween(200)) { -it / 2 } + fadeOut(tween(150)))
+                (
+                    scaleIn(
+                        spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMedium),
+                        initialScale = 0.55f,
+                    ) + fadeIn(tween(120))
+                    ) togetherWith (scaleOut(tween(120), targetScale = 0.85f) + fadeOut(tween(100)))
             },
             modifier = boxModifier.fillMaxWidth(),
             label = "valueBoxContent",
@@ -276,7 +321,7 @@ fun StepperButtons(onDecrement: () -> Unit, onIncrement: () -> Unit, modifier: M
 @Composable
 private fun StepperButton(symbol: String, onClick: () -> Unit) {
     val interactionSource = remember { MutableInteractionSource() }
-    val scale = rememberPressScale(interactionSource, pressedScale = 0.88f)
+    val scale = rememberPressScale(interactionSource, pressedScale = 0.8f)
 
     Row(
         modifier = Modifier
@@ -302,20 +347,27 @@ fun PlainResultLine(label: String, value: String, color: Color = AppFieldColors.
     }
 }
 
-/** Full-width outlined reset button matching the reference app's muted "СБРОС" button. */
+/** Full-width outlined reset button that bursts a little confetti when tapped. */
 @Composable
 fun ResetButton(label: String, onClick: () -> Unit) {
     val interactionSource = remember { MutableInteractionSource() }
-    val scale = rememberPressScale(interactionSource, pressedScale = 0.97f)
+    val scale = rememberPressScale(interactionSource, pressedScale = 0.96f)
+    var burstTrigger by remember { mutableStateOf(0) }
 
-    OutlinedButton(
-        onClick = onClick,
-        interactionSource = interactionSource,
-        modifier = Modifier
-            .fillMaxWidth()
-            .graphicsLayer { scaleX = scale; scaleY = scale },
-    ) {
-        Text(label)
+    Box(modifier = Modifier.fillMaxWidth()) {
+        OutlinedButton(
+            onClick = {
+                burstTrigger++
+                onClick()
+            },
+            interactionSource = interactionSource,
+            modifier = Modifier
+                .fillMaxWidth()
+                .graphicsLayer { scaleX = scale; scaleY = scale },
+        ) {
+            Text(label)
+        }
+        ConfettiBurst(trigger = burstTrigger, modifier = Modifier.matchParentSize())
     }
 }
 

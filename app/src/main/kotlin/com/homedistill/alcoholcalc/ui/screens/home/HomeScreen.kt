@@ -1,8 +1,11 @@
 package com.homedistill.alcoholcalc.ui.screens.home
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
+import androidx.compose.animation.scaleIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -44,6 +47,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import kotlinx.coroutines.delay
 import com.homedistill.alcoholcalc.BuildConfig
 import com.homedistill.alcoholcalc.R
 import com.homedistill.alcoholcalc.data.UserPreferencesRepository
@@ -122,13 +126,26 @@ fun HomeScreen(
     }
 }
 
-/** Fades and slides an item in, delayed a little more for each successive index. */
+/** Bounces and slides an item in, delayed a little more for each successive index. */
 @Composable
 private fun StaggeredEntry(visible: Boolean, index: Int, content: @Composable () -> Unit) {
+    var itemVisible by remember { mutableStateOf(false) }
+    LaunchedEffect(visible) {
+        if (visible) {
+            delay(index * STAGGER_STEP_MS.toLong())
+            itemVisible = true
+        }
+    }
     AnimatedVisibility(
-        visible = visible,
-        enter = fadeIn(tween(ITEM_ANIM_MS, delayMillis = index * STAGGER_STEP_MS)) +
-            slideInVertically(tween(ITEM_ANIM_MS, delayMillis = index * STAGGER_STEP_MS)) { it / 3 },
+        visible = itemVisible,
+        enter = fadeIn(tween(ITEM_ANIM_MS)) +
+            slideInVertically(
+                spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
+            ) { it / 2 } +
+            scaleIn(
+                spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
+                initialScale = 0.8f,
+            ),
     ) {
         Column(content = { content() })
     }
